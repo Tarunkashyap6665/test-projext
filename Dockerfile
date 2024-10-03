@@ -12,6 +12,8 @@ EXPOSE 3000
 
 ENV NEXT_PUBLIC_SERVER_URL=https://artifixer.tech
 
+ENV NODE_ENV production
+
 RUN npm run build
 
 CMD [ "npm","run","start"]
