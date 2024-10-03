@@ -1,0 +1,57 @@
+name: Continuous Integration and Continuous Deployment on Heroku
+
+on:
+    push:
+    pull_request: 
+    workflow_dispatch: 
+
+jobs:
+    test:
+        name: Check linting and docker image build
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Get Code
+              uses: actions/checkout@v4
+              with: 
+                fetch-depth : 0
+
+            - name: Install Node.js
+              uses: actions/setup-node@v4
+              with:
+                node-version: '20.16.0'
+            
+            - name: Install dependencies
+              run: npm install
+
+            - name: Run lint
+              run: npm run lint
+
+            - name: Login Docker
+              run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+            - name: Build Docker Image
+              run: docker image build -t tarunkashyap6665/artifixer:1.0 .
+    
+    deploy: 
+        name: Deploy to Heroku
+        needs: test
+        if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
+        runs-on: ubuntu-latest
+
+        steps: 
+            - name: Get Code
+              uses: actions/checkout@v4
+              with:
+                persist-credentials: false
+
+            - name: Using Heroku Docker Deploy action
+              id: deployapp
+              uses: Tarunkashyap6665/heroku-docker-deploy@v1.0.0
+              with:
+                HEROKU_APP_NAME: artifixer-test
+                HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY}}
+
+            - name: Heroku App Link
+              run: echo ${{steps.deployapp.outputs.HEROKU_APP_URL}}
+            
