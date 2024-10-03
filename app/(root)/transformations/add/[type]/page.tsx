@@ -18,6 +18,11 @@ const AddTransformationTypePage = async ({ params: { type } }: SearchParamProps)
   const transformation = transformationTypes[type];
   const { userId } = auth();
 
+  console.log(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
+  console.log(process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME)
+  console.log(process.env.NEXT_PUBLIC_SERVER_URL)
+  console.log(process.env.CLERK_SECRET_KEY)
+
 
   if (!userId) redirect('/sign-in')
 
