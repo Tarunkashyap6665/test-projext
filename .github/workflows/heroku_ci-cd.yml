@@ -24,7 +24,7 @@ jobs:
               id: deployapp
               uses: Tarunkashyap6665/heroku-docker-deploy@v1.0.0
               with:
-                HEROKU_APP_NAME: artifixer-test
+                HEROKU_APP_NAME: hello-test-artifixer
                 HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY}}
 
             - name: Heroku App Link
