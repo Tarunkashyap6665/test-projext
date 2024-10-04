@@ -24,4 +24,7 @@ jobs:
 
             - name: List file 
               run: ls -a
+
+            - name: List file 
+              run: cat .env
             
