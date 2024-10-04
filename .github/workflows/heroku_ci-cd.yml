@@ -19,7 +19,7 @@ jobs:
 
             - name: Create env
               run: |
-                heroku config -a YOUR_HEROKU_APP_NAME --json | jq -r 'to_entries | map(select(.key | startswith("NEXT_PUBLIC"))) | .[] | "\(.key)=\(.value)"' > .env
+                heroku config -a artifixer-test --json | jq -r 'to_entries | map(select(.key | startswith("NEXT_PUBLIC"))) | .[] | "\(.key)=\(.value)"' > .env
                 cat .env
 
             - name: Using Heroku Docker Deploy action
