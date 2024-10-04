@@ -17,16 +17,6 @@ jobs:
               with:
                 persist-credentials: false
 
-            - name: Login Docker
-              run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-
-            - name: Using Heroku Docker Deploy action
-              id: deployapp
-              uses: ./.github/actions/heroku-docker-deploy
-              with:
-                HEROKU_APP_NAME: artifixer-test
-                HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY}}
-
-            - name: Heroku App Link
-              run: echo ${{steps.deployapp.outputs.HEROKU_APP_URL}}
+            - name: List file 
+              run: ls
             
