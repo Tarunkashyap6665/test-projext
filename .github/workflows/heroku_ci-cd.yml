@@ -20,7 +20,7 @@ jobs:
                 persist-credentials: false
 
             - name: Creating dot Env
-              run: heroku config -a artifixer-test --json | jq -r 'to_entries | .[] | "\(.key)=\(.value)"' > .env.local
+              run: heroku config -a artifixer-test --json | jq -r 'to_entries | .[] | "\(.key)=\(.value)"' > .env.production
             
             - name: Login Docker
               run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
