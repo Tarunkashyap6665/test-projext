@@ -40,17 +40,16 @@ runs:
       env:
         HEROKU_API_KEY: ${{inputs.HEROKU_API_KEY}}
 
-    - name: Extract environment variables
-      id: parseHerokuEnv
+    - name: Set environment variables to runner
       run: |
-        export ENV_VARS=$(jq -r 'to_entries | map("\(.key)=\(.value|tostring)") | .[]' heroku-env.json | xargs)
-        echo "envVars=$ENV_VARS" >> $GITHUB_OUTPUT
+        # Parse the JSON and export each variable to the runner environment
+        for var in $(jq -r 'to_entries | .[] | "\(.key)=\(.value)"' heroku-env.json); do
+          echo "$var" >> $GITHUB_ENV
+        done
       shell: bash
-      env:
-        HEROKU_API_KEY: ${{inputs.HEROKU_API_KEY}}
 
-    - name: Build docker image with Heroku environment variables
-      run: docker image build --build-arg ${{steps.parseHerokuEnv.outputs.envVars}} -t ${{inputs.HEROKU_APP_NAME}} -f ${{inputs.DOCKERFILE_NAME}} .
+    - name: Build docker image with environment variables
+      run: docker image build -t ${{inputs.HEROKU_APP_NAME}} -f ${{inputs.DOCKERFILE_NAME}} .
       shell: bash
 
     - name: Check HEROKU_APP_NAME Exists
