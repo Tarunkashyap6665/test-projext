@@ -27,7 +27,7 @@ runs:
     using: "composite"
     steps:
 
-        - name: Creating dot Env
+        - name: Creating Environment  File
           run: heroku config -a artifixer-test --json | jq -r 'to_entries | .[] | "\(.key)=\(.value)"' > .env.production
           shell: bash
         - name: Build docker image

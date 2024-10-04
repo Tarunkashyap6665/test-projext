@@ -12,4 +12,6 @@ EXPOSE 3000
 
 RUN npm run build
 
+RUN rm -rf .env.production
+
 CMD [ "npm","run","start"]

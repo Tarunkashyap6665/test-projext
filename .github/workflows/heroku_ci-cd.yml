@@ -10,8 +10,6 @@ jobs:
         name: Deploy to Heroku
         if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
         runs-on: ubuntu-latest
-        env:
-          HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY}}
 
         steps: 
             - name: Get Code
