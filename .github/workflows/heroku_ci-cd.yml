@@ -23,5 +23,5 @@ jobs:
               run: heroku config -a artifixer-test --json | jq -r 'to_entries | .[] | "\(.key)=\(.value)"' > .env
 
             - name: List file 
-              run: ls
+              run: ls -a
             
