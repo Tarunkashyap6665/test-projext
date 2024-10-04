@@ -30,6 +30,8 @@ runs:
         - name: Creating Environment  File
           run: heroku config -a artifixer-test --json | jq -r 'to_entries | .[] | "\(.key)=\(.value)"' > .env.production
           shell: bash
+          env:
+            HEROKU_API_KEY: ${{inputs.HEROKU_API_KEY}}
         - name: Build docker image
           run: docker image build -t ${{inputs.HEROKU_APP_NAME}} -f ${{inputs.DOCKERFILE_NAME}} .
           shell: bash
