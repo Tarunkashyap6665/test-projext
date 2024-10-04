@@ -10,6 +10,8 @@ jobs:
         name: Deploy to Heroku
         if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
         runs-on: ubuntu-latest
+        env:
+          HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY}}
 
         steps: 
             - name: Get Code
@@ -17,6 +19,9 @@ jobs:
               with:
                 persist-credentials: false
 
+            - name: Creating dot Env
+              run: heroku config -a artifixer-test --json | jq -r 'to_entries | .[] | "\(.key)=\(.value)"' > .env.local
+            
             - name: Login Docker
               run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
