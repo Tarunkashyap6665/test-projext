@@ -1,0 +1,88 @@
+name: Heroku Docker Deploy
+author: Tarun Kashypap
+description: Heroku Docker Deploy enables you to deploy containerized apps on Heroku by packaging your app in a Docker image and pushing it to the platform for seamless deployment and scaling.
+
+inputs:
+  HEROKU_APP_NAME:
+    description: "The name of your Heroku app to deploy the Docker container."
+    required: true
+    default: "myapp-demo"
+
+  HEROKU_API_KEY:
+    description: "The API key used to authenticate with Heroku for deployment."
+    required: true
+
+  DOCKERFILE_NAME:
+    description: "The path to the Dockerfile used for building the container."
+    required: false
+    default: "./Dockerfile"
+
+outputs:
+  HEROKU_APP_URL:
+    description: "The URL of the deployed Heroku app."
+    value: ${{steps.appRelease.outputs.heroku_app_url}}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Log in to the Heroku Container Registry
+      run: heroku container:login             
+      shell: bash
+      env:
+        HEROKU_API_KEY: ${{inputs.HEROKU_API_KEY}}
+
+    - name: Fetch Heroku app environment variables
+      id: fetchHerokuEnv
+      run: |
+        heroku config -a ${{inputs.HEROKU_APP_NAME}} --json > heroku-env.json
+        cat heroku-env.json
+      shell: bash
+      env:
+        HEROKU_API_KEY: ${{inputs.HEROKU_API_KEY}}
+
+    - name: Extract environment variables
+      id: parseHerokuEnv
+      run: |
+        export ENV_VARS=$(jq -r 'to_entries | map("\(.key)=\(.value|tostring)") | .[]' heroku-env.json | xargs)
+        echo "envVars=$ENV_VARS" >> $GITHUB_OUTPUT
+      shell: bash
+      env:
+        HEROKU_API_KEY: ${{inputs.HEROKU_API_KEY}}
+
+    - name: Build docker image with Heroku environment variables
+      run: docker image build --build-arg ${{steps.parseHerokuEnv.outputs.envVars}} -t ${{inputs.HEROKU_APP_NAME}} -f ${{inputs.DOCKERFILE_NAME}} .
+      shell: bash
+
+    - name: Check HEROKU_APP_NAME Exists
+      id: checkHerokuApp
+      run: |
+        result=$(heroku apps | grep -wx ${{inputs.HEROKU_APP_NAME}} > /dev/null && echo "true" || echo "false"); echo "result=$result" >> $GITHUB_OUTPUT
+        echo "appNameExists=$result" >> $GITHUB_OUTPUT
+      shell: bash
+      env:
+        HEROKU_API_KEY: ${{inputs.HEROKU_API_KEY}}
+
+    - name: Create App container in Heroku
+      if: steps.checkHerokuApp.outputs.appNameExists == 'false'
+      run: heroku create ${{inputs.HEROKU_APP_NAME}} --stack container
+      shell: bash
+      env:
+        HEROKU_API_KEY: ${{inputs.HEROKU_API_KEY}}
+
+    - name: Tag docker image to Heroku repository
+      run: docker image tag ${{inputs.HEROKU_APP_NAME}} registry.heroku.com/${{inputs.HEROKU_APP_NAME}}/web
+      shell: bash
+
+    - name: Push image to Heroku repository
+      run: docker push registry.heroku.com/${{inputs.HEROKU_APP_NAME}}/web
+      shell: bash
+
+    - name: Release to Heroku
+      id: appRelease
+      run: |
+        heroku container:release web -a ${{inputs.HEROKU_APP_NAME}}
+        app_url=$(heroku apps:info -a ${{inputs.HEROKU_APP_NAME}} | grep "Web URL")
+        echo "heroku_app_url=$app_url" >> $GITHUB_OUTPUT
+      shell: bash
+      env:
+        HEROKU_API_KEY: ${{inputs.HEROKU_API_KEY}}

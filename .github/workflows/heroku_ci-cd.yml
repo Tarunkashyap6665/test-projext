@@ -22,7 +22,7 @@ jobs:
 
             - name: Using Heroku Docker Deploy action
               id: deployapp
-              uses: Tarunkashyap6665/heroku-docker-deploy@v1.0.0
+              uses: ./.github/actions/heroku-docker-deploy
               with:
                 HEROKU_APP_NAME: artifixer-test
                 HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY}}
