@@ -26,11 +26,6 @@ outputs:
 runs:
     using: "composite"
     steps:
-        - name: Get Code
-          uses: actions/checkout@v4
-          with:
-            persist-credentials: false
-          shell: bash
 
         - name: Creating dot Env
           run: heroku config -a artifixer-test --json | jq -r 'to_entries | .[] | "\(.key)=\(.value)"' > .env.production
