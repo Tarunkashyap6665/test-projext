@@ -51,6 +51,8 @@ runs:
     - name: Build docker image with environment variables
       run: docker image build -t ${{inputs.HEROKU_APP_NAME}} -f ${{inputs.DOCKERFILE_NAME}} .
       shell: bash
+      env:
+        NEXT_PUBLIC_SERVER_URL: http://localhost:3000
 
     - name: Check HEROKU_APP_NAME Exists
       id: checkHerokuApp
