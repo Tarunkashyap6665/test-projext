@@ -21,6 +21,8 @@ jobs:
               run: |
                 heroku config -a artifixer-test --json | jq -r 'to_entries | map(select(.key | startswith("NEXT_PUBLIC"))) | .[] | "\(.key)=\(.value)"' > .env
                 cat .env
+              env:
+                HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY}}
 
             - name: Using Heroku Docker Deploy action
               id: deployapp
