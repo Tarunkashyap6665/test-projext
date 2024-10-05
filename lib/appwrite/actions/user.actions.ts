@@ -88,6 +88,8 @@ export async function deleteUser(clerkId: string) {
       Query.equal("clerkId", clerkId),
     ]);
 
+    console.log(userToDelete.documents[0])
+
     if (!userToDelete.documents[0]) {
       throw new Error("User not found When Deleting...");
     }
