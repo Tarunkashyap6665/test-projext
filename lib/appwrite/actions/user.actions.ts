@@ -1,0 +1,125 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+
+import getOrCreateDB from "../database/dbSetup";
+import { databases } from "../database/config";
+import { DB_NAME, USER_COLLECTION } from "../database/name";
+import { ID, Query } from "node-appwrite";
+import { handleError } from "@/lib/utils";
+import { equal } from "assert";
+
+// CREATE
+export async function createUser(user: CreateUserParams) {
+  try {
+    await getOrCreateDB();
+
+    const userExist= await databases.listDocuments(DB_NAME,USER_COLLECTION,[
+      Query.equal("clerkId",user.clerkId)
+    ])
+
+    if(userExist.documents[0]) return JSON.parse(JSON.stringify(userExist.documents[0]));
+
+    const newUser = await databases.createDocument(
+      DB_NAME,
+      USER_COLLECTION,
+      ID.unique(),
+      user
+    );
+
+    return JSON.parse(JSON.stringify(newUser));
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// READ
+export async function getUserById(userId: string) {
+  try {
+    // await delay(1000)
+    await getOrCreateDB();
+
+    const user = await databases.listDocuments(DB_NAME, USER_COLLECTION, [
+      Query.equal("clerkId", userId),
+    ]);
+
+    if (!user) throw new Error("User not found by Searching id");
+
+    return JSON.parse(JSON.stringify(user.documents[0]));
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+// UPDATE
+export async function updateUser(clerkId: string, user: UpdateUserParams) {
+  try {
+    await getOrCreateDB();
+
+    const usr = await databases.listDocuments(DB_NAME, USER_COLLECTION, [
+      Query.equal("clerkId", clerkId),
+    ]);
+    if (!user) return;
+    const updatedUser = await databases.updateDocument(
+      DB_NAME,
+      USER_COLLECTION,
+      usr.documents[0].$id,
+      user
+    );
+
+    if (!updatedUser) throw new Error("User update failed");
+
+    return JSON.parse(JSON.stringify(updatedUser));
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+// DELETE
+export async function deleteUser(clerkId: string) {
+  try {
+    await getOrCreateDB();
+
+    // Find user to delete
+    const userToDelete = await databases.listDocuments(DB_NAME, USER_COLLECTION, [
+      Query.equal("clerkId", clerkId),
+    ]);
+
+    if (!userToDelete.documents[0]) {
+      throw new Error("User not found When Deleting...");
+    }
+
+    // Delete user
+    const deletedUser = await databases.deleteDocument(DB_NAME, USER_COLLECTION, userToDelete.documents[0].$id)
+    revalidatePath("/");
+
+    return deletedUser ? JSON.parse(JSON.stringify(deletedUser)) : null;
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+// USE CREDITS
+export async function updateCredits(userId: string, creditFee: number) {
+  try {
+    await getOrCreateDB();
+
+    const usr = await databases.getDocument(DB_NAME, USER_COLLECTION, userId)
+
+    const updatedUserCredits = await databases.updateDocument(DB_NAME, USER_COLLECTION, userId, {
+      creditBalance:usr.creditBalance + creditFee
+    })
+
+    
+
+    if (!updatedUserCredits) throw new Error("User credits update failed");
+
+    return JSON.parse(JSON.stringify(updatedUserCredits));
+  } catch (error) {
+    handleError(error);
+  } 
+}
