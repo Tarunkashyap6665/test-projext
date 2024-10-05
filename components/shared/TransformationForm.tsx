@@ -24,8 +24,6 @@ import MediaUploader from "./MediaUploader"
 import TransformedImage from "./TransformedImage"
 import { updateCredits } from "@/lib/appwrite/actions/user.actions"
 import { CldImage, getCldImageUrl } from "next-cloudinary"
-import { addImage, updateImage } from "@/lib/actions/image.actions"
-import { useRouter } from "next/navigation"
 import { InsufficientCreditsModal } from "./InsufficientCreditsModal"
 import { FiDownloadCloud, FiRotateCw } from "react-icons/fi"
 import { PlaceholderValue } from "next/dist/shared/lib/get-img-props"
@@ -42,12 +40,10 @@ const TransformationForm = ({ action, data = null, userId, type, creditBalance, 
   const transformationType = transformationTypes[type];
   const [image, setImage] = useState(data)
   const [newTransformation, setNewTransformation] = useState<Transformations | null>(null);
-  const [, setIsSubmitting] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
   const [transformationConfig, setTransformationConfig] = useState(config)
   const [, startTransition] = useTransition()
   const [fileName, setFileName] = useState(null)
-  const router = useRouter()
 
   console.log("transformation forms    =======", process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
   console.log("transformation forms  =======", process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME)

@@ -1,6 +1,6 @@
 import { Databases, Client } from "node-appwrite";
 
-let client = new Client();
+const client = new Client();
 
 if (
   process.env.NEXT_PUBLIC_APPWRITE_HOST_URL &&

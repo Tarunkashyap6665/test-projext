@@ -7,7 +7,6 @@ import { databases } from "../database/config";
 import { DB_NAME, USER_COLLECTION } from "../database/name";
 import { ID, Query } from "node-appwrite";
 import { handleError } from "@/lib/utils";
-import { equal } from "assert";
 
 // CREATE
 export async function createUser(user: CreateUserParams) {
@@ -33,9 +32,9 @@ export async function createUser(user: CreateUserParams) {
   }
 }
 
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+// function delay(ms: number): Promise<void> {
+//   return new Promise((resolve) => setTimeout(resolve, ms));
+// }
 
 // READ
 export async function getUserById(userId: string) {
