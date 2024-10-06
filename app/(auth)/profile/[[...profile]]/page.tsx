@@ -4,8 +4,8 @@ import { redirect } from "next/navigation";
 
 
 const Profile = () => {
-  const {userId}=auth()
-  if(!userId) redirect("/sign-in")
+  const { userId } = auth()
+  if (!userId) redirect("/sign-in")
   return <UserProfile />
 };
 

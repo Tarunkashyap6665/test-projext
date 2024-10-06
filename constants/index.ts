@@ -284,7 +284,7 @@ export const plans = [
     icon: "/assets/icons/free-plan.svg",
     price: 40,
     credits: 120,
-    isAvailable: false,
+    isAvailable: true,
     inclusions: [
       {
         label: "120 Credits",

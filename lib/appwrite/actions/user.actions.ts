@@ -2,7 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 
-import getOrCreateDB from "../database/dbSetup";
 import { databases } from "../database/config";
 import { DB_NAME, USER_COLLECTION } from "../database/name";
 import { ID, Query } from "node-appwrite";
@@ -11,8 +10,6 @@ import { handleError } from "@/lib/utils";
 // CREATE
 export async function createUser(user: CreateUserParams) {
   try {
-    await getOrCreateDB();
-
     const userExist= await databases.listDocuments(DB_NAME,USER_COLLECTION,[
       Query.equal("clerkId",user.clerkId)
     ])
@@ -40,14 +37,12 @@ function delay(ms: number): Promise<void> {
 export async function getUserById(userId: string) {
   try {
     // await delay(1000)
-    await getOrCreateDB();
-
     let user = await databases.listDocuments(DB_NAME, USER_COLLECTION, [
       Query.equal("clerkId", userId),
     ]);
 
     if (!user.documents[0]) {
-      delay(200)
+      delay(400)
       user = await databases.listDocuments(DB_NAME, USER_COLLECTION, [
         Query.equal("clerkId", userId),
       ]);
@@ -62,8 +57,6 @@ export async function getUserById(userId: string) {
 // UPDATE
 export async function updateUser(clerkId: string, user: UpdateUserParams) {
   try {
-    await getOrCreateDB();
-
     const usr = await databases.listDocuments(DB_NAME, USER_COLLECTION, [
       Query.equal("clerkId", clerkId),
     ]);
@@ -87,8 +80,6 @@ export async function updateUser(clerkId: string, user: UpdateUserParams) {
 // DELETE
 export async function deleteUser(clerkId: string) {
   try {
-    await getOrCreateDB();
-
     // Find user to delete
     const userToDelete = await databases.listDocuments(DB_NAME, USER_COLLECTION, [
       Query.equal("clerkId", clerkId),
@@ -111,8 +102,6 @@ export async function deleteUser(clerkId: string) {
 // USE CREDITS
 export async function updateCredits(userId: string, creditFee: number) {
   try {
-    await getOrCreateDB();
-
     const usr = await databases.getDocument(DB_NAME, USER_COLLECTION, userId)
 
     const updatedUserCredits = await databases.updateDocument(DB_NAME, USER_COLLECTION, userId, {

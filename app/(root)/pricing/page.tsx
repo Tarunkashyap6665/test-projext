@@ -1,5 +1,6 @@
 import { PricingCard } from "@/components/PricingCard";
 import { plans } from "@/constants";
+import { getUserById } from "@/lib/appwrite/actions/user.actions";
 import { auth } from "@clerk/nextjs/server";
 import { Metadata } from "next";
 import React from "react";
@@ -12,17 +13,13 @@ export const generateMetadata = (): Metadata => {
   }
 }
 
-const page = () => {
+const page = async() => {
   const { userId } = auth();
-
-  let userPlan: boolean;
-
-  if (!userId) {
-    userPlan = false
+  let user = null;
+  if(userId) {
+    user= await getUserById(userId)
   }
-  else {
-    userPlan = true
-  }
+
 
 
   return (
@@ -38,7 +35,7 @@ const page = () => {
           </p>
         </div>
         <div className="mt-12">
-          <PricingCard userPlan={userPlan} plans={plans} />
+          <PricingCard user={user} plans={plans} />
 
         </div>
       </div>

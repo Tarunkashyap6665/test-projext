@@ -24,9 +24,7 @@ const AddTransformationTypePage = async ({ params: { type } }: SearchParamProps)
   console.log("transformation =======", process.env.CLERK_SECRET_KEY)
 
 
-  if (!userId) redirect('/sign-in')
-
-  const user = await getUserById(userId);
+  const user = await getUserById(userId!);
   
   return (
     <div className=" py-16  bg-gray-100 px-4 sm:px-6 lg:px-8">

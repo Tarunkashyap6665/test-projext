@@ -17,6 +17,18 @@ declare type UpdateUserParams = {
   photo: string;
 };
 
+
+declare type UserProps={
+  clerkId: string;
+  email: string;
+  username: string;
+  firstName: string | null;
+  lastName: string | null;
+  photo: string;
+  planId:number;
+  creditBalance:number;
+}
+
 // ====== IMAGE PARAMS
 declare type AddImageParams = {
   image: {

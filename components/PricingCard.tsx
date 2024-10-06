@@ -30,13 +30,14 @@ function CheckIcon() {
 }
 
 export function PricingCard({
-  userPlan,
+  user,
   plans,
 }: {
-  userPlan?: boolean;
+  user?: UserProps|null;
   plans: PlanProp;
 }) {
   const router=useRouter()
+
   return (
     <div className="grid lg:grid-flow-col gap-8 justify-center">
       {plans.map((plan,key) => (
@@ -125,10 +126,10 @@ export function PricingCard({
                   placeholder={undefined}
                   onPointerEnterCapture={undefined}
                   onPointerLeaveCapture={undefined}
-                  disabled={userPlan}
+                  disabled={user?.planId==plan._id}
                   onClick={()=>{router.push("/sign-in")}}
                 >
-                  {userPlan ? "Current Plan" : "Get Started"}
+                  {user?.planId==plan._id ? "Current Plan" : "Get Started"}
                 </Button>
               ) : (
                 <Button
