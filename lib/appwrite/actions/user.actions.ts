@@ -32,9 +32,9 @@ export async function createUser(user: CreateUserParams) {
   }
 }
 
-// function delay(ms: number): Promise<void> {
-//   return new Promise((resolve) => setTimeout(resolve, ms));
-// }
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 // READ
 export async function getUserById(userId: string) {
@@ -42,11 +42,16 @@ export async function getUserById(userId: string) {
     // await delay(1000)
     await getOrCreateDB();
 
-    const user = await databases.listDocuments(DB_NAME, USER_COLLECTION, [
+    let user = await databases.listDocuments(DB_NAME, USER_COLLECTION, [
       Query.equal("clerkId", userId),
     ]);
 
-    if (!user) throw new Error("User not found by Searching id");
+    if (!user.documents[0]) {
+      delay(200)
+      user = await databases.listDocuments(DB_NAME, USER_COLLECTION, [
+        Query.equal("clerkId", userId),
+      ]);
+    };
 
     return JSON.parse(JSON.stringify(user.documents[0]));
   } catch (error) {
@@ -62,6 +67,7 @@ export async function updateUser(clerkId: string, user: UpdateUserParams) {
     const usr = await databases.listDocuments(DB_NAME, USER_COLLECTION, [
       Query.equal("clerkId", clerkId),
     ]);
+
     if (!user) return;
     const updatedUser = await databases.updateDocument(
       DB_NAME,
@@ -88,10 +94,8 @@ export async function deleteUser(clerkId: string) {
       Query.equal("clerkId", clerkId),
     ]);
 
-    console.log(userToDelete.documents[0])
-
     if (!userToDelete.documents[0]) {
-      throw new Error("User not found When Deleting...");
+      return  -1
     }
 
     // Delete user
