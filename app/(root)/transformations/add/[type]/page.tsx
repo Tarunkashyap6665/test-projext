@@ -3,7 +3,6 @@ import { transformationTypes } from '@/constants'
 import { getUserById } from '@/lib/appwrite/actions/user.actions'
 import { auth } from '@clerk/nextjs/server'
 import { Metadata } from 'next'
-import { redirect } from 'next/navigation'
 import React from 'react'
 
 export const generateMetadata = ({ params: { type } }: SearchParamProps): Metadata => {
