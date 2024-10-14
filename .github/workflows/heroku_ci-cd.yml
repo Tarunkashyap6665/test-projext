@@ -17,6 +17,9 @@ jobs:
               with:
                 persist-credentials: false
 
+            - name: "Check"
+              run: heroku login
+
             - name: Create env
               run: |
                 heroku config -a artifixer-test --json | jq -r 'to_entries | map(select(.key | startswith("NEXT_PUBLIC"))) | .[] | "\(.key)=\(.value)"' > .env
