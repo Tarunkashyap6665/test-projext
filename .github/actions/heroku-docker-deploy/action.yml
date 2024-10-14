@@ -26,20 +26,8 @@ outputs:
 runs:
     using: "composite"
     steps:
-
-        - name: Creating Environment  File
-          run: heroku config -a artifixer-test --json | jq -r 'to_entries | .[] | "\(.key)=\(.value)"' > .env.production
-          shell: bash
-          env:
-            HEROKU_API_KEY: ${{inputs.HEROKU_API_KEY}}
-        - name: Build docker image
-          run: docker image build -t ${{inputs.HEROKU_APP_NAME}} -f ${{inputs.DOCKERFILE_NAME}} .
-          shell: bash
-        - name: Log in tot he Heroku Container Registry
-          run: heroku container:login             
-          shell: bash
-          env:
-            HEROKU_API_KEY: ${{inputs.HEROKU_API_KEY}}
+        - name: Install Heroku Cli
+          run: curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
         - name: Check HEROKU_APP_NAME Exists
           id: checkHerokuApp
           run: |
@@ -51,6 +39,19 @@ runs:
         - name: Create App container in Heroku
           if: steps.checkHerokuApp.outputs.appNameExists == 'false'
           run: heroku create ${{inputs.HEROKU_APP_NAME}} --stack container
+          shell: bash
+          env:
+            HEROKU_API_KEY: ${{inputs.HEROKU_API_KEY}}
+        - name: Creating Environment  File
+          run: heroku config -a ${{inputs.HEROKU_APP_NAME}} --json | jq -r 'to_entries | map(select(.key | startswith("NEXT_PUBLIC"))) | .[] | "\(.key)=\(.value)"' > .env.production
+          shell: bash
+          env:
+            HEROKU_API_KEY: ${{inputs.HEROKU_API_KEY}}
+        - name: Build docker image
+          run: docker image build -t ${{inputs.HEROKU_APP_NAME}} -f ${{inputs.DOCKERFILE_NAME}} .
+          shell: bash
+        - name: Log in tot he Heroku Container Registry
+          run: heroku container:login             
           shell: bash
           env:
             HEROKU_API_KEY: ${{inputs.HEROKU_API_KEY}}
