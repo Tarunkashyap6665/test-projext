@@ -11,6 +11,7 @@ const Layout = async ({ children, model }: Readonly<{ children: React.ReactNode,
     let user;
     if (authUser.userId) {
         user = await getUserById(authUser.userId);
+        console.log(";;;;;;;;jaljfasfadf----------",user)
 
     }
 

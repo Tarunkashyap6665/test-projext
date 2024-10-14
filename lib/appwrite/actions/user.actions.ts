@@ -48,7 +48,7 @@ export async function getUserById(userId: string) {
       ]);
     };
 
-    return JSON.parse(JSON.stringify(user.documents[0]));
+    return user.documents[0];
   } catch (error) {
     handleError(error);
   }
@@ -71,7 +71,7 @@ export async function updateUser(clerkId: string, user: UpdateUserParams) {
 
     if (!updatedUser) throw new Error("User update failed");
 
-    return JSON.parse(JSON.stringify(updatedUser));
+    return updatedUser;
   } catch (error) {
     handleError(error);
   }
@@ -93,7 +93,7 @@ export async function deleteUser(clerkId: string) {
     const deletedUser = await databases.deleteDocument(DB_NAME, USER_COLLECTION, userToDelete.documents[0].$id)
     revalidatePath("/");
 
-    return deletedUser ? JSON.parse(JSON.stringify(deletedUser)) : null;
+    return deletedUser ? deletedUser : null;
   } catch (error) {
     handleError(error);
   }
@@ -112,7 +112,7 @@ export async function updateCredits(userId: string, creditFee: number) {
 
     if (!updatedUserCredits) throw new Error("User credits update failed");
 
-    return JSON.parse(JSON.stringify(updatedUserCredits));
+    return updatedUserCredits;
   } catch (error) {
     handleError(error);
   } 

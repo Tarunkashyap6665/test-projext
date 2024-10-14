@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { SignedIn, SignedOut} from '@clerk/nextjs';
 import { FaRobot, FaUserCircle } from 'react-icons/fa';
 import { ProfileButton } from './ProfileButton';
+import { Models } from 'node-appwrite';
 
 
 
@@ -48,7 +49,7 @@ function NavList() {
 }
 
 
-export function NavigationBar({user}:{user:any}) {
+export function NavigationBar({user}:{user:Models.Document|undefined}) {
   const [openNav, setOpenNav] = React.useState(false);
   React.useEffect(() => {
     window.addEventListener(
@@ -98,7 +99,7 @@ export function NavigationBar({user}:{user:any}) {
           <NavList />
           <div className="flex w-full flex-nowrap items-center gap-2 lg:hidden">
             <SignedIn>
-              <ProfileButton user={user} showName={true}/>
+              {user!=undefined && <ProfileButton user={user} showName={true}/>}
             </SignedIn>
             <SignedOut>
               <Link href={"/sign-in"} className="w-full bg-white text-purple-900 px-4 py-2 text-center rounded-md font-semibold hover:bg-gray-200 transition duration-300"><FaUserCircle className="inline-block mr-2 " />Login / Sign Up</Link>

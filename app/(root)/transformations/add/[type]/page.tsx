@@ -17,11 +17,6 @@ const AddTransformationTypePage = async ({ params: { type } }: SearchParamProps)
   const transformation = transformationTypes[type];
   const { userId } = auth();
 
-  console.log("transformation =======", process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
-  console.log("transformation =======", process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME)
-  console.log("transformation =======", process.env.NEXT_PUBLIC_SERVER_URL)
-  console.log("transformation =======", process.env.CLERK_SECRET_KEY)
-
 
   const user = await getUserById(userId!);
   
@@ -40,9 +35,9 @@ const AddTransformationTypePage = async ({ params: { type } }: SearchParamProps)
           <div className="bg-white shadow-lg rounded-lg">
             <TransformationForm
               action='Add'
-              userId={user.$id}
+              userId={user!.$id}
               type={transformation.type as TransformationTypeKey}
-              creditBalance={user.creditBalance}
+              creditBalance={user!.creditBalance}
             />
           </div>
         </div>
