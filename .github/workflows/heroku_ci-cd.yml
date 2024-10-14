@@ -18,7 +18,7 @@ jobs:
                 persist-credentials: false
 
             - name: "Check"
-              run: heroku login
+              run: curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
             - name: Create env
               run: |
